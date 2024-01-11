@@ -31,8 +31,8 @@ class NavbarComponent extends Component {
                                 width="55"
                                 height="55"
                                 className="d-inline-block"
-                            /> &nbsp;
-                            React Bootstrap &nbsp;
+                            /> &nbsp; 
+                            React Bootstrap &nbsp; &nbsp; &nbsp;
                             <ClockComponent/> 
                         </Navbar.Brand>
                     </Container>
