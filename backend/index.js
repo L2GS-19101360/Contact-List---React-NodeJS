@@ -16,6 +16,10 @@ app.get('/', (req, res) => {
     res.send("Welcome User to the Backend Server");
 });
 
+const contactRoutes = require('./src/routes/contacts.route');
+
+app.use('/backend/contacts', contactRoutes);
+
 app.listen(port, () => {
     console.log(`Backend Server is Listening on Port ${port}`);
 });
