@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { Table, Button } from 'react-bootstrap'
-import { PersonBadgeFill, ImageFill, PersonFill, EnvelopeFill, PhoneFill, PencilSquare, TrashFill } from 'react-bootstrap-icons'
+import { Table, Button, Form, InputGroup } from 'react-bootstrap'
+import { PersonBadgeFill, ImageFill, PersonFill, EnvelopeFill, PhoneFill, PencilSquare, TrashFill, Search } from 'react-bootstrap-icons'
 import LetteredAvatar from "./LetterAvatar";
+import CreateContactModal from '../components/CreateContactModal';
 
 class TableComponent extends Component {
 
@@ -38,6 +39,20 @@ class TableComponent extends Component {
 
         return (
             <div>
+                <div style={{ marginTop: "10px", marginBottom: "10px", display: "inline-flex", width: "90%" }}>
+                    <CreateContactModal /> &nbsp; &nbsp; &nbsp;
+                    <InputGroup>
+                        <Form.Control
+                            placeholder="Enter Contact"
+                            aria-label="Enter Contact"
+                            aria-describedby="basic-addon2"
+                        />
+                        <Button variant="primary" id="button-addon2">
+                            <Search/>
+                        </Button>
+                    </InputGroup>
+                </div>
+
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -53,7 +68,7 @@ class TableComponent extends Component {
                     <tbody>
                         {contactArray.map((contact, index) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                <td>
                                     <LetteredAvatar name={`${contact.firstname} ${contact.lastname}`} size={50} />
                                 </td>
                                 <td>{contact.firstname}</td>

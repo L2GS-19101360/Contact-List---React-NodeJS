@@ -41,6 +41,7 @@ export default function LetteredAvatar({ name, size, onClick }) {
     alignItems: "center",
     fontSize: `${fontSize}px`,
     cursor: "pointer",
+    margin: "auto",
   };
 
   return (

@@ -2,27 +2,26 @@ import { useState, Component } from 'react'
 import './App.css'
 import NavbarComponent from '../components/NavbarComponent';
 import TableComponent from '../components/TableComponent';
-import CreateContactModal from '../components/CreateContactModal';
 
-class App extends Component{
 
-  constructor(){
+class App extends Component {
+
+  constructor() {
     super();
   }
 
-  componentDidMount(){
+  componentDidMount() {
 
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
 
   }
 
-  render(){
-    return(
+  render() {
+    return (
       <div>
-        <NavbarComponent/>
-        <CreateContactModal/>
-        <TableComponent/>
+        <NavbarComponent />
+        <TableComponent />
       </div>
     );
   }

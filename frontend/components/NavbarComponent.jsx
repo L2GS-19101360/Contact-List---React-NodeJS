@@ -28,8 +28,8 @@ class NavbarComponent extends Component {
                             <img
                                 alt=""
                                 src={weblogo}
-                                width="55"
-                                height="55"
+                                width="50"
+                                height="50"
                                 className="d-inline-block"
                             /> &nbsp; 
                             React Bootstrap &nbsp; &nbsp; &nbsp;

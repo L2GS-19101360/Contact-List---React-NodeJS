@@ -10,7 +10,7 @@ var Contacts = function(contact){
     this.email = contact.email;
     this.contactnumber = contact.contactnumber;
     this.registered = new Date();
-    this.updated = new Date();
+    this.updated = null;
 
 };
 
@@ -26,5 +26,18 @@ Contacts.findAll = function(result){
         }
     });
 };
+
+Contacts.create = function(newContact, result) {
+    dbConn.query("INSERT INTO contacts set ?", newContact, function(err, res){
+        if (err){
+            console.log("Error: ", err);
+            console.log(err, null);
+        }
+        else{
+            console.log(res.insertId);
+            result(null, res.insertId);
+        }
+    });
+}
 
 module.exports = Contacts
