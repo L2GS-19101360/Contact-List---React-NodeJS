@@ -15,7 +15,7 @@ var Contacts = function(contact){
 };
 
 Contacts.findAll = function(result){
-    dbConn.query("SELECT * FROM contacts", function(err, res){
+    dbConn.query("SELECT * FROM contacts ORDER BY lastname", function(err, res){
         if (err){
             console.log("Error: ", err);
             result(null, err);
