@@ -2,20 +2,23 @@ import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Table, Button, Form, InputGroup } from 'react-bootstrap'
-import { PersonBadgeFill, ImageFill, PersonFill, EnvelopeFill, PhoneFill, PencilSquare, TrashFill, Search } from 'react-bootstrap-icons'
+import { PersonBadgeFill, ImageFill, PersonFill, EnvelopeFill, PhoneFill, PencilSquare, TrashFill, Search } from 'react-bootstrap-icons';
 import LetteredAvatar from "./LetterAvatar";
 import CreateContactModal from '../components/CreateContactModal';
 
 class TableComponent extends Component {
-
     constructor() {
         super();
         this.state = {
             contactArray: [],
-        }
+        };
     }
 
     componentDidMount() {
+        this.fetchContacts();
+    }
+
+    fetchContacts = () => {
         var xhttp = new XMLHttpRequest();
         xhttp.open("GET", "http://localhost:3000/backend/contacts/", true);
         xhttp.send();
@@ -28,11 +31,14 @@ class TableComponent extends Component {
                 });
             }
         };
-    }
+    };
 
-    componentWillUnmount() {
+    handleCreateContact = () => {
+        // Call this function to reload the table after creating a new contact
+        this.fetchContacts();
+    };
 
-    }
+    componentWillUnmount() {}
 
     render() {
         const { contactArray } = this.state;
@@ -40,15 +46,12 @@ class TableComponent extends Component {
         return (
             <div>
                 <div style={{ marginTop: "10px", marginBottom: "10px", display: "inline-flex", width: "90%" }}>
-                    <CreateContactModal /> &nbsp; &nbsp; &nbsp;
+                    {/* Pass the handleCreateContact function to CreateContactModal */}
+                    <CreateContactModal onCreateContact={this.handleCreateContact} /> &nbsp; &nbsp; &nbsp;
                     <InputGroup>
-                        <Form.Control
-                            placeholder="Enter Contact"
-                            aria-label="Enter Contact"
-                            aria-describedby="basic-addon2"
-                        />
+                        <Form.Control placeholder="Enter Contact" aria-label="Enter Contact" aria-describedby="basic-addon2" />
                         <Button variant="primary" id="button-addon2">
-                            <Search/>
+                            <Search />
                         </Button>
                     </InputGroup>
                 </div>
@@ -84,7 +87,6 @@ class TableComponent extends Component {
             </div>
         );
     }
-
 }
 
-export default TableComponent
+export default TableComponent;

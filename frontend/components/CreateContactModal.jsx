@@ -5,7 +5,7 @@ import Toast from 'react-bootstrap/Toast';
 import { Form } from 'react-bootstrap';
 import { PersonFillAdd } from 'react-bootstrap-icons';
 
-function CreateContactModal() {
+function CreateContactModal({ onCreateContact }) {
     const [showModal, setShowModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
 
@@ -42,6 +42,9 @@ function CreateContactModal() {
                 console.log('Contact created successfully');
                 setShowToast(true);
                 setShowModal(false);
+
+                // Trigger the callback to reload the table
+                onCreateContact();
             } else {
                 console.error('Error Creating Contact:', await response.text());
             }
@@ -108,7 +111,7 @@ function CreateContactModal() {
 
             <Toast onClose={handleToastClose} show={showToast} delay={2000} autohide className="position-absolute top-0 start-50 translate-middle-x bg-success text-white">
                 <Toast.Header>
-                    
+                    {/* ... (rest of the Toast.Header if needed) */}
                 </Toast.Header>
                 <Toast.Body>Contact Successfully Created!</Toast.Body>
             </Toast>
