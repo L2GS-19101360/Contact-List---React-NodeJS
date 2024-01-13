@@ -109,7 +109,7 @@ function CreateContactModal({ onCreateContact }) {
                 </Modal.Footer>
             </Modal>
 
-            <Toast onClose={handleToastClose} show={showToast} delay={2000} autohide className="position-absolute top-0 start-50 translate-middle-x bg-success text-white">
+            <Toast onClose={handleToastClose} show={showToast} delay={2000} autohide className="position-absolute top-25 start-50 translate-middle-x bg-success text-white">
                 <Toast.Header>
                     {/* ... (rest of the Toast.Header if needed) */}
                 </Toast.Header>

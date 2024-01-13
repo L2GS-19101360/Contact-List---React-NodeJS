@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { Table, Button, Form, InputGroup } from 'react-bootstrap'
+import { Table, Button, Form, InputGroup, Toast } from 'react-bootstrap'
 import { PersonBadgeFill, ImageFill, PersonFill, EnvelopeFill, PhoneFill, PencilSquare, TrashFill, Search } from 'react-bootstrap-icons';
 import LetteredAvatar from "./LetterAvatar";
 import CreateContactModal from '../components/CreateContactModal';
@@ -11,6 +11,7 @@ class TableComponent extends Component {
         super();
         this.state = {
             contactArray: [],
+            showToast: false,
         };
     }
 
@@ -38,10 +39,31 @@ class TableComponent extends Component {
         this.fetchContacts();
     };
 
-    componentWillUnmount() {}
+    handleDeleteContact = (contactid) => {
+        console.log(contactid);
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("DELETE", `http://localhost:3000/backend/contacts/${contactid}`, true);
+        xhttp.send();
+
+        xhttp.onreadystatechange = () => {
+            if (xhttp.status == 200) {
+                this.setState({ showToast: true }, () => {
+                    // Autohide the toast after 3 seconds
+                    setTimeout(() => {
+                        this.setState({ showToast: false });
+                    }, 2000);
+                });
+
+                this.fetchContacts();
+            }
+        };
+    }
+
+    componentWillUnmount() { }
 
     render() {
-        const { contactArray } = this.state;
+        const { contactArray, showToast } = this.state;
 
         return (
             <div>
@@ -79,11 +101,18 @@ class TableComponent extends Component {
                                 <td>{contact.email}</td>
                                 <td>{contact.contactnumber}</td>
                                 <td><Button variant="warning"><PencilSquare /></Button>{' '}</td>
-                                <td><Button variant="danger"><TrashFill /></Button>{' '}</td>
+                                <td><Button variant="danger" onClick={() => this.handleDeleteContact(contact.id)}><TrashFill /></Button>{' '}</td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
+
+                <Toast onClose={() => this.setState({ showToast: false })} show={showToast} delay={2000} autohide className="position-absolute top-25 start-50 translate-middle-x bg-danger text-black">
+                    <Toast.Header>
+                        
+                    </Toast.Header>
+                    <Toast.Body>Contact Successfully Deleted!</Toast.Body>
+                </Toast>
             </div>
         );
     }

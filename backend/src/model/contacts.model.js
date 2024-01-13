@@ -38,6 +38,18 @@ Contacts.create = function(newContact, result) {
             result(null, res.insertId);
         }
     });
-}
+};
+
+Contacts.delete = function(id, result){
+    dbConn.query("DELETE FROM contacts WHERE id = ?", [id], function(err, res){
+        if (err){
+            console.log("Error: ", err);
+            result(null, err);
+        }
+        else{
+            result(null, res);
+        }
+    });
+};
 
 module.exports = Contacts
