@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { Table, Button, Form, InputGroup, Toast } from 'react-bootstrap'
+import { Table, Button, Form, InputGroup, Toast, Modal } from 'react-bootstrap'
 import { PersonBadgeFill, ImageFill, PersonFill, EnvelopeFill, PhoneFill, PencilSquare, TrashFill, Search } from 'react-bootstrap-icons';
 import LetteredAvatar from "./LetterAvatar";
 import CreateContactModal from '../components/CreateContactModal';
@@ -12,6 +12,12 @@ class TableComponent extends Component {
         this.state = {
             contactArray: [],
             showToast: false,
+            showModal: false,
+            selectedContactId: null,
+            selectedContactfirstname: "",
+            selectedContactlastname: "",
+            selectedContactemail: "",
+            selectedContactnumber: null,
         };
     }
 
@@ -35,7 +41,6 @@ class TableComponent extends Component {
     };
 
     handleCreateContact = () => {
-        // Call this function to reload the table after creating a new contact
         this.fetchContacts();
     };
 
@@ -60,10 +65,31 @@ class TableComponent extends Component {
         };
     }
 
+    handleUpdateContact = (contactid) => {
+        console.log(contactid);
+
+        const index = this.state.contactArray.findIndex(contact => contact.id === contactid);
+
+        if (index !== -1) {
+            this.setState({
+                selectedContactId: contactid,
+                showModal: true,
+                selectedContactfirstname: this.state.contactArray[index].firstname,
+                selectedContactlastname: this.state.contactArray[index].lastname,
+                selectedContactemail: this.state.contactArray[index].email,
+                selectedContactnumber: this.state.contactArray[index].contactnumber,
+            });
+        }
+    }
+
+    handleModalClose = () => {
+        this.setState({ showModal: false, selectedContactId: null });
+    }
+
     componentWillUnmount() { }
 
     render() {
-        const { contactArray, showToast } = this.state;
+        const { contactArray, showToast, showModal, selectedContactId } = this.state;
 
         return (
             <div>
@@ -100,7 +126,7 @@ class TableComponent extends Component {
                                 <td>{contact.lastname}</td>
                                 <td>{contact.email}</td>
                                 <td>{contact.contactnumber}</td>
-                                <td><Button variant="warning"><PencilSquare /></Button>{' '}</td>
+                                <td><Button variant="warning" onClick={() => this.handleUpdateContact(contact.id)}><PencilSquare /></Button>{' '}</td>
                                 <td><Button variant="danger" onClick={() => this.handleDeleteContact(contact.id)}><TrashFill /></Button>{' '}</td>
                             </tr>
                         ))}
@@ -109,10 +135,51 @@ class TableComponent extends Component {
 
                 <Toast onClose={() => this.setState({ showToast: false })} show={showToast} delay={2000} autohide className="position-absolute top-25 start-50 translate-middle-x bg-danger text-black">
                     <Toast.Header>
-                        
+
                     </Toast.Header>
                     <Toast.Body>Contact Successfully Deleted!</Toast.Body>
                 </Toast>
+
+                <Modal show={showModal} onHide={this.handleModalClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title><PencilSquare /> Update Contact {this.state.selectedContactId}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+
+                        <Form>
+                            <Form.Label>First Name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={this.state.selectedContactfirstname}
+                                onChange={(e) => this.setState({ selectedContactfirstname: e.target.value })}
+                            /> <br />
+                            <Form.Label>Last Name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={this.state.selectedContactlastname}
+                                onChange={(e) => this.setState({ selectedContactlastname: e.target.value })}
+                            /> <br />
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={this.state.selectedContactemail}
+                                onChange={(e) => this.setState({ selectedContactemail: e.target.value })}
+                            /> <br />
+                            <Form.Label>Contact Number</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={this.state.selectedContactnumber}
+                                onChange={(e) => this.setState({ selectedContactnumber: e.target.value })}
+                            /> <br />
+                        </Form>
+
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleModalClose}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         );
     }

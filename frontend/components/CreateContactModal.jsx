@@ -69,6 +69,7 @@ function CreateContactModal({ onCreateContact }) {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
+                        <Form.Label>First Name</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Enter First Name"
@@ -76,6 +77,7 @@ function CreateContactModal({ onCreateContact }) {
                             onChange={(e) => setFirstName(e.target.value)}
                         />
                         <br />
+                        <Form.Label>Last Name</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Enter Last Name"
@@ -83,6 +85,7 @@ function CreateContactModal({ onCreateContact }) {
                             onChange={(e) => setLastName(e.target.value)}
                         />
                         <br />
+                        <Form.Label>Email</Form.Label>
                         <Form.Control
                             type="email"
                             placeholder="Enter Email"
@@ -90,6 +93,7 @@ function CreateContactModal({ onCreateContact }) {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                         <br />
+                        <Form.Label>Contact Number</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Enter Contact Number"
