@@ -11,13 +11,18 @@ class TableComponent extends Component {
         super();
         this.state = {
             contactArray: [],
-            showToast: false,
+
+            showToast1: false,
+            showToast2: false,
+
             showModal: false,
-            selectedContactId: null,
+
+            selectedContactId: "",
+            seletedContactImage: "",
             selectedContactfirstname: "",
             selectedContactlastname: "",
             selectedContactemail: "",
-            selectedContactnumber: null,
+            selectedContactnumber: "",
         };
     }
 
@@ -53,10 +58,10 @@ class TableComponent extends Component {
 
         xhttp.onreadystatechange = () => {
             if (xhttp.status == 200) {
-                this.setState({ showToast: true }, () => {
+                this.setState({ showToast1: true }, () => {
                     // Autohide the toast after 3 seconds
                     setTimeout(() => {
-                        this.setState({ showToast: false });
+                        this.setState({ showToast1: false });
                     }, 2000);
                 });
 
@@ -65,21 +70,99 @@ class TableComponent extends Component {
         };
     }
 
-    handleUpdateContact = (contactid) => {
-        console.log(contactid);
+    handleModalOpen = (contactid, firstname, lastname, email, contactnumber) => {
+        this.setState({
+            showModal: true,
+            selectedContactId: contactid,
+            selectedContactfirstname: firstname,
+            selectedContactlastname: lastname,
+            selectedContactemail: email,
+            selectedContactnumber: contactnumber,
+        });
+    }
 
-        const index = this.state.contactArray.findIndex(contact => contact.id === contactid);
+    handleUpdateContact = (event) => {
+        event.preventDefault();
 
-        if (index !== -1) {
-            this.setState({
-                selectedContactId: contactid,
-                showModal: true,
-                selectedContactfirstname: this.state.contactArray[index].firstname,
-                selectedContactlastname: this.state.contactArray[index].lastname,
-                selectedContactemail: this.state.contactArray[index].email,
-                selectedContactnumber: this.state.contactArray[index].contactnumber,
-            });
+        if (!this.state.seletedContactImage) {
+            const updateContact = {
+                id: this.state.selectedContactId,
+                image: "#%&{}>",
+                firstname: this.state.selectedContactfirstname,
+                lastname: this.state.selectedContactlastname,
+                email: this.state.selectedContactemail,
+                contactnumber: this.state.selectedContactnumber
+            };
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("PUT", `http://localhost:3000/backend/contacts/${updateContact.id}`, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+
+            xhttp.onreadystatechange = () => {
+                if (xhttp.readyState === 4) {
+                    if (xhttp.status === 200) {
+                        this.setState({
+                            showModal: false,
+                            showToast2: true
+                        }, () => {
+                            // Autohide the toast after 3 seconds
+                            setTimeout(() => {
+                                this.setState({ showToast2: false });
+                            }, 2000);
+                        });
+
+                        this.fetchContacts();
+                    } else {
+                        // Handle error here
+                        console.error(`Error updating contact: ${xhttp.status}`);
+                    }
+                }
+            };
+
+            xhttp.send(JSON.stringify(updateContact));
         }
+        else {
+            const updateContact = {
+                id: this.state.selectedContactId,
+                image: this.state.seletedContactImage.name,
+                firstname: this.state.selectedContactfirstname,
+                lastname: this.state.selectedContactlastname,
+                email: this.state.selectedContactemail,
+                contactnumber: this.state.selectedContactnumber
+            };
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("PUT", `http://localhost:3000/backend/contacts/${updateContact.id}`, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+
+            xhttp.onreadystatechange = () => {
+                if (xhttp.readyState === 4) {
+                    if (xhttp.status === 200) {
+                        this.setState({
+                            showModal: false,
+                            showToast2: true
+                        }, () => {
+                            // Autohide the toast after 3 seconds
+                            setTimeout(() => {
+                                this.setState({ showToast2: false });
+                            }, 2000);
+                        });
+
+                        this.fetchContacts();
+                    } else {
+                        // Handle error here
+                        console.error(`Error updating contact: ${xhttp.status}`);
+                    }
+                }
+            };
+
+            xhttp.send(JSON.stringify(updateContact));
+        }
+    };
+
+    handleImageChange = (event) => {
+        const file = event.target.files[0];
+        this.setState({ seletedContactImage: file });
     }
 
     handleModalClose = () => {
@@ -89,7 +172,7 @@ class TableComponent extends Component {
     componentWillUnmount() { }
 
     render() {
-        const { contactArray, showToast, showModal, selectedContactId } = this.state;
+        const { contactArray, showToast1, showToast2, showModal } = this.state;
 
         return (
             <div>
@@ -126,18 +209,25 @@ class TableComponent extends Component {
                                 <td>{contact.lastname}</td>
                                 <td>{contact.email}</td>
                                 <td>{contact.contactnumber}</td>
-                                <td><Button variant="warning" onClick={() => this.handleUpdateContact(contact.id)}><PencilSquare /></Button>{' '}</td>
+                                <td><Button variant="warning" onClick={(event) => this.handleModalOpen(contact.id, contact.firstname, contact.lastname, contact.email, contact.contactnumber)}><PencilSquare /></Button>{' '}</td>
                                 <td><Button variant="danger" onClick={() => this.handleDeleteContact(contact.id)}><TrashFill /></Button>{' '}</td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
 
-                <Toast onClose={() => this.setState({ showToast: false })} show={showToast} delay={2000} autohide className="position-absolute top-25 start-50 translate-middle-x bg-danger text-black">
+                <Toast onClose={() => this.setState({ showToast1: false })} show={showToast1} delay={2000} autohide className="position-absolute top-0 start-50 translate-middle-x bg-danger text-black">
                     <Toast.Header>
 
                     </Toast.Header>
                     <Toast.Body>Contact Successfully Deleted!</Toast.Body>
+                </Toast>
+
+                <Toast onClose={() => this.setState({ showToast2: false })} show={showToast2} delay={2000} autohide className="position-absolute top-0 start-50 translate-middle-x bg-warning text-black">
+                    <Toast.Header>
+
+                    </Toast.Header>
+                    <Toast.Body>Contact Successfully Updated!</Toast.Body>
                 </Toast>
 
                 <Modal show={showModal} onHide={this.handleModalClose}>
@@ -146,7 +236,7 @@ class TableComponent extends Component {
                     </Modal.Header>
                     <Modal.Body>
 
-                        <Form>
+                        <Form onSubmit={(e) => e.preventDefault()}>
                             <Form.Label>First Name</Form.Label>
                             <Form.Control
                                 type="text"
@@ -171,6 +261,13 @@ class TableComponent extends Component {
                                 value={this.state.selectedContactnumber}
                                 onChange={(e) => this.setState({ selectedContactnumber: e.target.value })}
                             /> <br />
+                            <Form.Group controlId="formFile" className="mb-3">
+                                <Form.Label>User Image</Form.Label>
+                                <Form.Control type="file" onChange={this.handleImageChange} />
+                            </Form.Group><br />
+                            <Button variant="warning" type="submit" onClick={this.handleUpdateContact}>
+                                <PencilSquare /> &nbsp; Update Contact
+                            </Button>{' '}
                         </Form>
 
                     </Modal.Body>

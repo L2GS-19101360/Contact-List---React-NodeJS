@@ -2,7 +2,7 @@
 
 var dbConn = require('../../config/db.config');
 
-var Contacts = function(contact){
+var Contacts = function (contact) {
 
     this.image = contact.image;
     this.firstname = contact.firstname;
@@ -14,39 +14,54 @@ var Contacts = function(contact){
 
 };
 
-Contacts.findAll = function(result){
-    dbConn.query("SELECT * FROM contacts ORDER BY lastname", function(err, res){
-        if (err){
+Contacts.update = function (id, contact, result) {
+    console.log("Updating contact with ID:", id);
+    console.log("Contact data:", contact);
+
+    dbConn.query("UPDATE contacts SET image=?, firstname=?, lastname=?, email=?, contactnumber=?, updated=? WHERE id=?", [contact.image, contact.firstname, contact.lastname, contact.email, contact.contactnumber, new Date(), id], function (err, res) {
+        if (err) {
+            console.log("Error: ", err);
+            result(null, err);
+        } else {
+            console.log("Update result:", res);
+            result(null, res);
+        }
+    });
+};
+
+Contacts.findAll = function (result) {
+    dbConn.query("SELECT * FROM contacts ORDER BY lastname", function (err, res) {
+        if (err) {
             console.log("Error: ", err);
             result(null, err);
         }
-        else{
+        else {
             console.log("Contacts: ", res);
             result(null, res);
         }
     });
 };
 
-Contacts.create = function(newContact, result) {
-    dbConn.query("INSERT INTO contacts set ?", newContact, function(err, res){
-        if (err){
+Contacts.create = function (newContact, result) {
+    dbConn.query("INSERT INTO contacts set ?", newContact, function (err, res) {
+        if (err) {
             console.log("Error: ", err);
             console.log(err, null);
         }
-        else{
+        else {
             console.log(res.insertId);
             result(null, res.insertId);
         }
     });
 };
 
-Contacts.delete = function(id, result){
-    dbConn.query("DELETE FROM contacts WHERE id = ?", [id], function(err, res){
-        if (err){
+Contacts.delete = function (id, result) {
+    dbConn.query("DELETE FROM contacts WHERE id = ?", [id], function (err, res) {
+        if (err) {
             console.log("Error: ", err);
             result(null, err);
         }
-        else{
+        else {
             result(null, res);
         }
     });
