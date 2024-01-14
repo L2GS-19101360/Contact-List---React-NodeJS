@@ -5,6 +5,7 @@ import { Table, Button, Form, InputGroup, Toast, Modal } from 'react-bootstrap'
 import { PersonBadgeFill, ImageFill, PersonFill, EnvelopeFill, PhoneFill, PencilSquare, TrashFill, Search } from 'react-bootstrap-icons';
 import LetteredAvatar from "./LetterAvatar";
 import CreateContactModal from '../components/CreateContactModal';
+import axios from 'axios';
 
 class TableComponent extends Component {
     constructor() {
@@ -18,7 +19,7 @@ class TableComponent extends Component {
             showModal: false,
 
             selectedContactId: "",
-            seletedContactImage: "",
+            selectedContactImage: "",
             selectedContactfirstname: "",
             selectedContactlastname: "",
             selectedContactemail: "",
@@ -84,85 +85,61 @@ class TableComponent extends Component {
     handleUpdateContact = (event) => {
         event.preventDefault();
 
-        if (!this.state.seletedContactImage) {
-            const updateContact = {
-                id: this.state.selectedContactId,
-                image: "#%&{}>",
-                firstname: this.state.selectedContactfirstname,
-                lastname: this.state.selectedContactlastname,
-                email: this.state.selectedContactemail,
-                contactnumber: this.state.selectedContactnumber
-            };
+        const formData = new FormData();
+        formData.append('file', this.state.selectedContactImage);
 
-            var xhttp = new XMLHttpRequest();
-            xhttp.open("PUT", `http://localhost:3000/backend/contacts/${updateContact.id}`, true);
-            xhttp.setRequestHeader("Content-Type", "application/json");
+        axios.post('http://localhost:3000/uploadfile', formData)
+            .then((res) => {
+                // Handle success if needed
+            })
+            .catch((err) => {
+                console.log(err);
+            });
 
-            xhttp.onreadystatechange = () => {
-                if (xhttp.readyState === 4) {
-                    if (xhttp.status === 200) {
-                        this.setState({
-                            showModal: false,
-                            showToast2: true
-                        }, () => {
-                            // Autohide the toast after 3 seconds
-                            setTimeout(() => {
-                                this.setState({ showToast2: false });
-                            }, 2000);
-                        });
+        const updateContact = {
+            id: this.state.selectedContactId,
+            image: this.state.selectedContactImage ? this.state.selectedContactImage.name : "#%&{}>",
+            firstname: this.state.selectedContactfirstname,
+            lastname: this.state.selectedContactlastname,
+            email: this.state.selectedContactemail,
+            contactnumber: this.state.selectedContactnumber
+        };
 
-                        this.fetchContacts();
-                    } else {
-                        // Handle error here
-                        console.error(`Error updating contact: ${xhttp.status}`);
-                    }
+        console.log(updateContact.image);
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("PUT", `http://localhost:3000/backend/contacts/${updateContact.id}`, true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+
+        xhttp.onreadystatechange = () => {
+            if (xhttp.readyState === 4) {
+                if (xhttp.status === 200) {
+                    this.setState({
+                        showModal: false,
+                        showToast2: true
+                    }, () => {
+                        // Autohide the toast after 3 seconds
+                        setTimeout(() => {
+                            this.setState({ showToast2: false });
+                        }, 2000);
+                    });
+
+                    this.fetchContacts();
+                } else {
+                    // Handle error here
+                    console.error(`Error updating contact: ${xhttp.status}`);
                 }
-            };
+            }
+        };
 
-            xhttp.send(JSON.stringify(updateContact));
-        }
-        else {
-            const updateContact = {
-                id: this.state.selectedContactId,
-                image: this.state.seletedContactImage.name,
-                firstname: this.state.selectedContactfirstname,
-                lastname: this.state.selectedContactlastname,
-                email: this.state.selectedContactemail,
-                contactnumber: this.state.selectedContactnumber
-            };
-
-            var xhttp = new XMLHttpRequest();
-            xhttp.open("PUT", `http://localhost:3000/backend/contacts/${updateContact.id}`, true);
-            xhttp.setRequestHeader("Content-Type", "application/json");
-
-            xhttp.onreadystatechange = () => {
-                if (xhttp.readyState === 4) {
-                    if (xhttp.status === 200) {
-                        this.setState({
-                            showModal: false,
-                            showToast2: true
-                        }, () => {
-                            // Autohide the toast after 3 seconds
-                            setTimeout(() => {
-                                this.setState({ showToast2: false });
-                            }, 2000);
-                        });
-
-                        this.fetchContacts();
-                    } else {
-                        // Handle error here
-                        console.error(`Error updating contact: ${xhttp.status}`);
-                    }
-                }
-            };
-
-            xhttp.send(JSON.stringify(updateContact));
-        }
+        xhttp.send(JSON.stringify(updateContact));
     };
 
     handleImageChange = (event) => {
         const file = event.target.files[0];
-        this.setState({ seletedContactImage: file });
+        this.setState({ 
+            selectedContactImage: file, 
+        });
     }
 
     handleModalClose = () => {
