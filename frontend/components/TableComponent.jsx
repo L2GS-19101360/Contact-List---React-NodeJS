@@ -137,8 +137,8 @@ class TableComponent extends Component {
 
     handleImageChange = (event) => {
         const file = event.target.files[0];
-        this.setState({ 
-            selectedContactImage: file, 
+        this.setState({
+            selectedContactImage: file,
         });
     }
 
@@ -180,7 +180,9 @@ class TableComponent extends Component {
                         {contactArray.map((contact, index) => (
                             <tr key={index}>
                                 <td>
-                                    <LetteredAvatar name={`${contact.firstname} ${contact.lastname}`} size={50} />
+                                    {contact.image === "#%&{}>" ?
+                                        <LetteredAvatar name={`${contact.firstname} ${contact.lastname}`} size={50} /> :
+                                        <img src={`../src/assets/contactimage/${contact.image}`} height={50} width={50} />}
                                 </td>
                                 <td>{contact.firstname}</td>
                                 <td>{contact.lastname}</td>
@@ -240,7 +242,7 @@ class TableComponent extends Component {
                             /> <br />
                             <Form.Group controlId="formFile" className="mb-3">
                                 <Form.Label>User Image</Form.Label>
-                                <Form.Control type="file" onChange={this.handleImageChange} />
+                                <Form.Control type="file" onChange={this.handleImageChange} ref={(input) => (this.fileInput = input)}/>
                             </Form.Group><br />
                             <Button variant="warning" type="submit" onClick={this.handleUpdateContact}>
                                 <PencilSquare /> &nbsp; Update Contact
