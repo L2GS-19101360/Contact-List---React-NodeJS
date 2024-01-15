@@ -12,6 +12,7 @@ class TableComponent extends Component {
         super();
         this.state = {
             contactArray: [],
+            searchContacts: [],
 
             showToast1: false,
             showToast2: false,
@@ -24,6 +25,8 @@ class TableComponent extends Component {
             selectedContactlastname: "",
             selectedContactemail: "",
             selectedContactnumber: "",
+
+            searchInput: "",
         };
     }
 
@@ -151,10 +154,38 @@ class TableComponent extends Component {
         this.setState({ showModal: false, selectedContactId: null });
     }
 
+    handleSearchContact = (event) => {
+        event.preventDefault();
+
+        const { searchInput } = this.state;
+
+        if (searchInput.trim() === "") {
+            // If searchInput is empty, fetch all contacts
+            window.location.reload();
+        } else {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", `http://localhost:3000/backend/contacts/search/${searchInput}`, true);
+            xhttp.send();
+
+            xhttp.onreadystatechange = () => {
+                if (xhttp.readyState === 4 && xhttp.status === 200) {
+                    var response = JSON.parse(xhttp.responseText);
+                    this.setState({ searchContacts: response.data }, () => {
+                        console.log(this.state.searchContacts);
+                    });
+                }
+            };
+        }
+    }
+
     componentWillUnmount() { }
 
     render() {
-        const { contactArray, showToast1, showToast2, showModal } = this.state;
+        const { contactArray, showToast1, showToast2, showModal, searchContacts } = this.state;
+
+        const searchEmpty = this.state.searchContacts.length != 0;
+
+        { console.log(searchEmpty) }
 
         return (
             <div>
@@ -162,8 +193,20 @@ class TableComponent extends Component {
                     {/* Pass the handleCreateContact function to CreateContactModal */}
                     <CreateContactModal onCreateContact={this.handleCreateContact} /> &nbsp; &nbsp; &nbsp;
                     <InputGroup>
-                        <Form.Control placeholder="Enter Contact" aria-label="Enter Contact" aria-describedby="basic-addon2" />
-                        <Button variant="primary" id="button-addon2">
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Contact"
+                            aria-label="Enter Contact"
+                            aria-describedby="basic-addon2"
+                            value={this.state.searchInput}
+                            onChange={(e) => this.setState({ searchInput: e.target.value })}
+                        />
+                        <Button
+                            variant="primary"
+                            id="button-addon2"
+                            type="submit"
+                            onClick={(event) => this.handleSearchContact(event)}
+                        >
                             <Search />
                         </Button>
                     </InputGroup>
@@ -181,7 +224,23 @@ class TableComponent extends Component {
                             <th>Delete</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    {searchEmpty ? <tbody>
+                        {searchContacts.map((contact, index) => (
+                            <tr key={index}>
+                                <td>
+                                    {contact.image === "#%&{}>" ?
+                                        <LetteredAvatar name={`${contact.firstname} ${contact.lastname}`} size={50} /> :
+                                        <img src={`../src/assets/contactimage/${contact.image}`} height={50} width={50} />}
+                                </td>
+                                <td>{contact.firstname}</td>
+                                <td>{contact.lastname}</td>
+                                <td>{contact.email}</td>
+                                <td>{contact.contactnumber}</td>
+                                <td><Button variant="warning" onClick={(event) => this.handleModalOpen(contact.id, contact.firstname, contact.lastname, contact.email, contact.contactnumber)}><PencilSquare /></Button>{' '}</td>
+                                <td><Button variant="danger" onClick={() => this.handleDeleteContact(contact.id)}><TrashFill /></Button>{' '}</td>
+                            </tr>
+                        ))}
+                    </tbody> : <tbody>
                         {contactArray.map((contact, index) => (
                             <tr key={index}>
                                 <td>
@@ -197,7 +256,8 @@ class TableComponent extends Component {
                                 <td><Button variant="danger" onClick={() => this.handleDeleteContact(contact.id)}><TrashFill /></Button>{' '}</td>
                             </tr>
                         ))}
-                    </tbody>
+                    </tbody>}
+
                 </Table>
 
                 <Toast onClose={() => this.setState({ showToast1: false })} show={showToast1} delay={2000} autohide className="position-absolute top-0 start-50 translate-middle-x bg-danger text-black">

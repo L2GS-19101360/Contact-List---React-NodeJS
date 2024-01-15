@@ -15,6 +15,18 @@ exports.findAll = function (req, res) {
     });
 };
 
+exports.findByInput = function(req, res){
+    Contacts.findByInput(req.params.input, function(err, contact){
+        if (err) {
+            res.send(err);
+        }
+        res.json({
+            status: 200,
+            data: contact
+        });
+    });
+};
+
 exports.update = function (req, res) {
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
         res.status(400).send({

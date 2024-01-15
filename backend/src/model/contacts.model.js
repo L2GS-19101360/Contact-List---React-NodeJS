@@ -29,6 +29,19 @@ Contacts.update = function (id, contact, result) {
     });
 };
 
+Contacts.findByInput = function (searchInput, result) {
+    dbConn.query("SELECT * FROM contacts WHERE firstname=? OR lastname=? OR email=? OR contactnumber=?", [searchInput, searchInput, searchInput, searchInput], function (err, res) {
+        if (err) {
+            console.log("Error: ", err);
+            result(err, null);
+        }
+        else {
+            console.log("Contacts: ", res);
+            result(null, res);
+        }
+    });
+}
+
 Contacts.findAll = function (result) {
     dbConn.query("SELECT * FROM contacts ORDER BY lastname", function (err, res) {
         if (err) {
