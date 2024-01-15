@@ -118,9 +118,14 @@ class TableComponent extends Component {
                         showModal: false,
                         showToast2: true
                     }, () => {
-                        // Autohide the toast after 3 seconds
+                        // Autohide the toast after 2 seconds
                         setTimeout(() => {
                             this.setState({ showToast2: false });
+
+                            // Reload the page after 2 seconds
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
                         }, 2000);
                     });
 
@@ -242,7 +247,7 @@ class TableComponent extends Component {
                             /> <br />
                             <Form.Group controlId="formFile" className="mb-3">
                                 <Form.Label>User Image</Form.Label>
-                                <Form.Control type="file" onChange={this.handleImageChange} ref={(input) => (this.fileInput = input)}/>
+                                <Form.Control type="file" onChange={this.handleImageChange} ref={(input) => (this.fileInput = input)} />
                             </Form.Group><br />
                             <Button variant="warning" type="submit" onClick={this.handleUpdateContact}>
                                 <PencilSquare /> &nbsp; Update Contact
